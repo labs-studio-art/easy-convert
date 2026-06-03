@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Easy Convert - Ethereal Elite Edition. The professional platform for file conversion, editing, and optimization with luxury design and elite performance." name="description"/>
+  <title>Easy Convert - Ethereal Elite Edition</title>
+
+  <!-- Scripts de Conversão -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js' type='text/javascript'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.js' type='text/javascript'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js' type='text/javascript'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js' type='text/javascript'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/pdfjs-dist/3.11.174/pdf.min.js' type='text/javascript'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js' type='text/javascript'></script>
+
+  <style>
+    /* Easy Convert v10 – Standard Web CSS */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --ec-primary: #FF6B35;
+      --ec-coral: #FF8C42;
+      --ec-purple: #7C3AED;
+      --ec-bg: #FAFAF9;
+      --ec-white: #FFFFFF;
+      --ec-text: #1F2937;
+      --ec-text2: #6B7280;
+      --ec-muted: #9CA3AF;
+      --ec-border: #E5E7EB;
+      --ec-success: #10B981;
+      --ec-error: #EF4444;
+      --ec-warn: #F59E0B;
+    }
+
+    #ec-app, #ec-app * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; }
+    #ec-app a { text-decoration: none; }
+
+    #ec-app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FFFFFF 0%, #FFF7F0 100%);
+      color: var(--ec-text);
+      line-height: 1.6;
+    }
+    .ec-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .ec-sidebar-left {
+      width: 280px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+      border-right: 1px solid var(--ec-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 28px 20px;
+      box-shadow: 0 4px 6px rgba(255,107,53,0.08);
+      flex-shrink: 0;
+    }
+    .ec-brand { margin-bottom: 36px; display:flex; align-items:center; gap:14px; }
+    .ec-brand-icon {
+      width:44px; height:44px;
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      border-radius:12px; display:flex; align-items:center; justify-content:center;
+      color:#FFF; font-weight:bold; font-size:18px;
+      box-shadow: 0 8px 20px rgba(255,107,53,0.3);
+      animation: ec-pulse 3s ease-in-out infinite;
+    }
+    @keyframes ec-pulse {
+      0%,100% { box-shadow:0 8px 20px rgba(255,107,53,0.3); }
+      50%      { box-shadow:0 12px 28px rgba(255,107,53,0.4); }
+    }
+    .ec-brand-text { display:flex; flex-direction:column; }
+    .ec-brand-name { font-weight:700; font-size:15px; color:var(--ec-text); }
+    .ec-brand-slogan { font-size:11px; color:var(--ec-muted); }
+
+    .ec-nav-tabs { display:flex; flex-direction:column; gap:8px; }
+    .ec-nav-tab {
+      padding:12px 14px; border-radius:10px; cursor:pointer;
+      font-size:13px; font-weight:500; color:var(--ec-text2);
+      background:transparent; border:none; text-align:left;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      display:flex; align-items:center; gap:10px;
+      position:relative; overflow:hidden; width:100%;
+    }
+    .ec-nav-tab::before {
+      content:''; position:absolute; left:0; top:0;
+      width:3px; height:100%;
+      background: linear-gradient(180deg, #FF6B35, #7C3AED);
+      transform: scaleY(0); transition: transform 0.3s ease;
+    }
+    .ec-nav-tab:hover {
+      background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(124,58,237,0.1) 100%);
+      color: var(--ec-text);
+      transform: translateX(4px);
+    }
+    .ec-nav-tab.active {
+      background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(124,58,237,0.15) 100%);
+      color: var(--ec-primary);
+      font-weight:600;
+    }
+    .ec-nav-tab.active::before { transform: scaleY(1); }
+
+    .ec-workspace { flex:1; display:flex; flex-direction:column; min-width:0; }
+    .ec-header {
+      background: linear-gradient(90deg, #FFFFFF 0%, #FFF7F0 100%);
+      border-bottom:1px solid var(--ec-border);
+      padding:24px 32px;
+      display:flex; justify-content:space-between; align-items:center;
+      box-shadow:0 2px 8px rgba(255,107,53,0.05);
+      flex-shrink:0;
+    }
+    .ec-header-title {
+      font-size:28px; font-weight:700;
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      display:flex; align-items:center; gap:14px;
+    }
+    .ec-header-icon { font-size:32px; animation: ec-bounce 2s ease-in-out infinite; }
+    @keyframes ec-bounce {
+      0%,100% { transform:translateY(0); }
+      50%      { transform:translateY(-8px); }
+    }
+    .ec-content {
+      flex:1; overflow-y:auto; padding:32px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #FFF7F0 100%);
+    }
+
+    .ec-tab-content { display:none; animation: ec-slide-up 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .ec-tab-content.active { display:block; }
+    @keyframes ec-slide-up {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .ec-sidebar-right {
+      width:320px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+      border-left:1px solid var(--ec-border);
+      padding:28px 20px; overflow-y:auto;
+      box-shadow:-4px 4px 6px rgba(255,107,53,0.08);
+      flex-shrink:0;
+    }
+    .ad-container-vertical {
+      background: linear-gradient(135deg, #FFF7F0 0%, #F9FAFB 100%);
+      border:2px solid var(--ec-border); border-radius:14px; padding:24px;
+      text-align:center; min-height:600px;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--ec-muted); font-size:12px;
+    }
+
+    .ec-upload-zone {
+      border:2px dashed var(--ec-primary); border-radius:14px;
+      padding:52px 28px; text-align:center; cursor:pointer;
+      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+      background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(124,58,237,0.08) 100%);
+      margin-bottom:28px; position:relative; overflow:hidden;
+    }
+    .ec-upload-zone::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,107,53,0.15) 0%, transparent 70%);
+      opacity:0; transition:opacity 0.4s ease;
+    }
+    .ec-upload-zone:hover {
+      border-color:var(--ec-purple);
+      background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(124,58,237,0.15) 100%);
+      transform:translateY(-4px);
+      box-shadow:0 12px 32px rgba(255,107,53,0.2);
+    }
+    .ec-upload-zone.dragover {
+      border-color:var(--ec-purple);
+      background: linear-gradient(135deg, rgba(255,107,53,0.2) 0%, rgba(124,58,237,0.2) 100%);
+      transform:scale(1.02);
+      box-shadow:0 16px 40px rgba(255,107,53,0.25);
+    }
+    .ec-upload-icon { font-size:64px; margin-bottom:18px; animation: ec-float 3.5s ease-in-out infinite; }
+    @keyframes ec-float {
+      0%,100% { transform:translateY(0) rotate(0deg); }
+      50%      { transform:translateY(-12px) rotate(2deg); }
+    }
+    .ec-upload-text { font-size:17px; color:var(--ec-text); margin-bottom:8px; font-weight:600; }
+    .ec-upload-subtext { font-size:13px; color:var(--ec-text2); }
+
+    input[type="file"] { display:none; }
+
+    .ec-thumbnails-container {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+      gap:18px; margin-bottom:28px;
+    }
+    .ec-thumbnail-item {
+      position:relative; border-radius:14px; overflow:hidden;
+      background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+      border:1px solid var(--ec-border);
+      aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ec-thumbnail-item:hover {
+      border-color:var(--ec-primary);
+      box-shadow:0 12px 32px rgba(255,107,53,0.2);
+      transform:translateY(-6px) scale(1.02);
+    }
+    .ec-thumbnail-item img { width:100%; height:100%; object-fit:cover; }
+    .ec-thumbnail-controls {
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.45) 100%);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+      opacity:0; transition:opacity 0.3s; backdrop-filter:blur(6px);
+    }
+    .ec-thumbnail-item:hover .ec-thumbnail-controls { opacity:1; }
+    .ec-control-btn {
+      width:44px; height:44px; border-radius:10px;
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+      color:#FFF; border:none; cursor:pointer; font-size:18px;
+      display:flex; align-items:center; justify-content:center;
+      transition:all 0.3s; box-shadow:0 6px 16px rgba(255,107,53,0.3);
+    }
+    .ec-control-btn:hover { transform:scale(1.12) rotate(5deg); }
+    .ec-control-btn.delete {
+      background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+      box-shadow:0 6px 16px rgba(239,68,68,0.3);
+    }
+
+    .ec-form-group { margin-bottom:28px; }
+    .ec-form-label { display:block; font-size:13px; font-weight:600; color:var(--ec-text); margin-bottom:10px; }
+    select, input[type="text"], input[type="number"], input[type="range"], textarea {
+      width:100%; padding:12px 14px; border:1px solid var(--ec-border); border-radius:10px;
+      font-size:13px; color:var(--ec-text);
+      background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+      transition:all 0.3s; font-family:inherit;
+    }
+    select:focus, input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+      outline:none; border-color:var(--ec-primary);
+      box-shadow:0 0 0 3px rgba(255,107,53,0.15);
+    }
+    input[type="range"] {
+      padding:0; height:6px; cursor:pointer;
+      background: linear-gradient(90deg, var(--ec-primary) 0%, var(--ec-purple) 100%);
+      border-radius:3px;
+    }
+
+    .ec-button {
+      padding:13px 28px; border-radius:10px; border:none;
+      font-size:14px; font-weight:600; cursor:pointer;
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      display:inline-flex; align-items:center; gap:8px;
+      position:relative; overflow:hidden;
+    }
+    .ec-button::before {
+      content:''; position:absolute; top:50%; left:50%;
+      width:0; height:0; border-radius:50%;
+      background:rgba(255,255,255,0.3);
+      transform:translate(-50%,-50%);
+      transition:width 0.6s, height 0.6s;
+    }
+    .ec-button:active::before { width:300px; height:300px; }
+    .ec-button-primary {
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      color:#FFF; box-shadow:0 6px 20px rgba(255,107,53,0.3);
+    }
+    .ec-button-primary:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(255,107,53,0.4); }
+    .ec-button-secondary {
+      background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+      color:var(--ec-text); border:1px solid var(--ec-border);
+    }
+    .ec-button-secondary:hover { transform:translateY(-2px); border-color:var(--ec-primary); }
+    .ec-button-success {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color:#FFF; box-shadow:0 6px 20px rgba(16,185,129,0.3);
+    }
+    .ec-button-group { display:flex; gap:14px; margin-top:28px; flex-wrap:wrap; }
+
+    .ec-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+      border:1px solid var(--ec-border); border-radius:14px;
+      padding:28px; margin-bottom:28px;
+      transition:all 0.4s; box-shadow:0 4px 12px rgba(255,107,53,0.05);
+    }
+    .ec-card:hover { border-color:var(--ec-primary); box-shadow:0 12px 32px rgba(255,107,53,0.15); transform:translateY(-4px); }
+    .ec-card-title { font-size:17px; font-weight:700; color:var(--ec-text); margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+
+    .ec-slider-container { display:flex; align-items:center; gap:14px; }
+    .ec-slider-container input[type="range"] { flex:1; }
+    .ec-slider-value {
+      min-width:60px; text-align:center; font-weight:600;
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+
+    .ec-divider { height:1px; background: linear-gradient(90deg, transparent, var(--ec-border), transparent); margin:28px 0; }
+    .ec-text-muted { color:var(--ec-muted); font-size:13px; }
+
+    .ec-alert {
+      padding:16px 18px; border-radius:10px; margin-bottom:18px;
+      font-size:13px; display:flex; align-items:center; gap:12px;
+      animation: ec-slide-up 0.4s ease;
+    }
+    .ec-alert-info    { background:rgba(59,130,246,0.1); color:#1e40af; border:1px solid rgba(59,130,246,0.2); }
+    .ec-alert-success { background:rgba(16,185,129,0.1); color:#047857; border:1px solid rgba(16,185,129,0.2); }
+    .ec-alert-error   { background:rgba(239,68,68,0.1);  color:#991b1b; border:1px solid rgba(239,68,68,0.2); }
+    .ec-alert-warning { background:rgba(245,158,11,0.1); color:#92400e; border:1px solid rgba(245,158,11,0.2); }
+
+    .ec-loading {
+      display:inline-block; width:18px; height:18px;
+      border:3px solid rgba(255,107,53,0.2); border-top-color:var(--ec-primary);
+      border-radius:50%; animation:ec-spin 0.8s linear infinite;
+    }
+    @keyframes ec-spin { to { transform:rotate(360deg); } }
+
+    .ec-badge {
+      display:inline-block; padding:6px 12px; border-radius:8px;
+      font-size:11px; font-weight:700;
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      color:#FFF; text-transform:uppercase; letter-spacing:0.5px;
+    }
+
+    .ec-ad-container-horizontal {
+      background: linear-gradient(135deg, #FFF7F0 0%, #F9FAFB 100%);
+      border:1px solid var(--ec-border); border-radius:14px; padding:24px;
+      text-align:center; min-height:90px;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--ec-muted); font-size:12px; margin-bottom:28px;
+    }
+
+    .ec-format-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:10px; margin-bottom:20px; }
+    .ec-format-badge {
+      padding:10px 12px; border-radius:8px;
+      background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(124,58,237,0.1) 100%);
+      border:1px solid rgba(255,107,53,0.2);
+      color:var(--ec-text); font-size:12px; font-weight:600;
+      text-align:center; cursor:pointer; transition:all 0.3s ease;
+      text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .ec-format-badge:hover {
+      background: linear-gradient(135deg, rgba(255,107,53,0.2) 0%, rgba(124,58,237,0.2) 100%);
+      border-color:var(--ec-primary); transform:translateY(-2px);
+    }
+    .ec-format-badge.selected {
+      background: linear-gradient(135deg, #FF6B35 0%, #7C3AED 100%);
+      color:#FFF; border-color:transparent; box-shadow:0 4px 12px rgba(255,107,53,0.3);
+    }
+
+    .ec-file-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+      border:1px solid var(--ec-border); border-radius:10px; margin-bottom:10px;
+      transition:all 0.3s ease;
+    }
+    .ec-file-item:hover { border-color:var(--ec-primary); box-shadow:0 4px 12px rgba(255,107,53,0.1); }
+    .ec-file-info { display:flex; align-items:center; gap:12px; flex:1; }
+    .ec-file-icon { font-size:20px; }
+    .ec-file-details { flex:1; }
+    .ec-file-name { font-weight:600; color:var(--ec-text); font-size:13px; }
+    .ec-file-size { font-size:12px; color:var(--ec-muted); }
+    .ec-file-actions { display:flex; gap:8px; }
+    .ec-file-action-btn {
+      width:32px; height:32px; border-radius:6px;
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+      color:#FFF; border:none; cursor:pointer; font-size:14px;
+      display:flex; align-items:center; justify-content:center; transition:all 0.3s ease;
+    }
+    .ec-file-action-btn:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(255,107,53,0.3); }
+
+    .ec-settings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px; margin-bottom:28px; }
+    .ec-settings-item {
+      padding:16px;
+      background: linear-gradient(135deg, rgba(255,107,53,0.05) 0%, rgba(124,58,237,0.05) 100%);
+      border:1px solid var(--ec-border); border-radius:10px; transition:all 0.3s ease;
+    }
+    .ec-settings-item:hover { border-color:var(--ec-primary); box-shadow:0 4px 12px rgba(255,107,53,0.1); }
+    .ec-settings-label { font-weight:600; color:var(--ec-text); margin-bottom:8px; display:block; }
+
+    .ec-legal-section { margin-bottom:22px; padding-bottom:22px; border-bottom:1px solid var(--ec-border); }
+    .ec-legal-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+    .ec-legal-heading {
+      font-weight:700; font-size:13px; color:var(--ec-text); margin-bottom:8px;
+      background: linear-gradient(135deg, #FF6B35, #7C3AED);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .ec-legal-list { list-style:none; padding:0; margin:8px 0 0 0; }
+    .ec-legal-list li { font-size:13px; color:var(--ec-muted); padding:5px 0; display:flex; align-items:flex-start; gap:8px; }
+    .ec-legal-list li::before { content:'\203A'; color:var(--ec-primary); font-weight:700; flex-shrink:0; line-height:1.6; }
+
+    @media (max-width:1024px) {
+      .ec-container { flex-direction:column; }
+      .ec-sidebar-left {
+        width:100%; height:auto; border-right:none; border-bottom:1px solid var(--ec-border);
+        flex-direction:row; padding:14px 16px; overflow-x:auto; overflow-y:hidden;
+      }
+      .ec-brand { margin-bottom:0; margin-right:24px; flex-shrink:0; }
+      .ec-nav-tabs { flex-direction:row; gap:4px; flex-wrap:nowrap; overflow-x:auto; }
+      .ec-nav-tab { white-space:nowrap; flex-shrink:0; width:auto; }
+      .ec-sidebar-right { width:100%; border-left:none; border-top:1px solid var(--ec-border); }
+      .ad-container-vertical { min-height:auto; height:auto; display:block; width:100%; margin-bottom:16px; }
+    }
+    @media (max-width:768px) {
+      .ec-header { padding:16px; }
+      .ec-header-title { font-size:22px; }
+      .ec-content { padding:16px; }
+      .ec-thumbnails-container { grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); }
+      .ec-button-group { flex-direction:column; }
+      .ec-button { width:100%; justify-content:center; }
+      .ec-format-grid { grid-template-columns:repeat(auto-fill, minmax(80px,1fr)); }
+    }
+  </style>
+</head>
+
+<body>
+<div id="ec-app">
+  <div class="ec-container">
+    <!-- SIDEBAR LEFT -->
+    <div class="ec-sidebar-left">
+      <div class="ec-brand">
+        <div class="ec-brand-icon">EC</div>
+        <div class="ec-brand-text">
+          <div class="ec-brand-name">Easy Convert</div>
+          <div class="ec-brand-slogan">Ethereal Elite</div>
+        </div>
+      </div>
+      <div class="ec-nav-tabs">
+        <button type="button" class="ec-nav-tab active"  onclick="ecSwitchTab(0)">&#128444;&#65039; Images</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(1)">&#128196; Documents</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(2)">&#128202; Sheets</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(3)">&#128230; Compress</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(4)">&#128194; Decompress</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(5)">&#9881;&#65039; Advanced</button>
+        <button type="button" class="ec-nav-tab"         onclick="ecSwitchTab(6)">&#9878;&#65039; Legal &amp; Support</button>
+      </div>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="ec-workspace">
+      <div class="ec-header">
+        <div class="ec-header-title">
+          <span class="ec-header-icon" id="ecHeaderIcon">&#128444;&#65039;</span>
+          <span id="ecHeaderTitle">Convert &amp; Edit Images</span>
+        </div>
+      </div>
+
+      <div class="ec-content" id="ecContent">
+        <!-- TAB 0: IMAGES -->
+        <div class="ec-tab-content active" id="ecTab0">
+          <div class="ec-form-group">
+            <div class="ec-upload-zone" id="ecUploadZone0" onclick="document.getElementById('ecFileInput0').click()">
+              <div class="ec-upload-icon">&#11014;&#65039;</div>
+              <div class="ec-upload-text">Click or drag images here</div>
+              <div class="ec-upload-subtext">JPG, PNG, WebP, GIF, BMP, TIFF, ICO, AVIF, SVG &#8226; Up to 50MB per file</div>
+            </div>
+            <input type="file" id="ecFileInput0" multiple="multiple" accept="image/*" onchange="ecHandleImageUpload(event,0)"/>
+          </div>
+          <div class="ec-thumbnails-container" id="ecThumbnails0"></div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#9881;&#65039; Conversion Settings</div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Output Format</label>
+              <div class="ec-format-grid" id="ecImageFormats">
+                <div class="ec-format-badge selected" onclick="ecSelectFormat('jpg',this)">JPG</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('png',this)">PNG</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('webp',this)">WebP</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('gif',this)">GIF</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('bmp',this)">BMP</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('tiff',this)">TIFF</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('ico',this)">ICO</div>
+                <div class="ec-format-badge" onclick="ecSelectFormat('avif',this)">AVIF</div>
+              </div>
+              <input type="hidden" id="ecSelectedImageFormat" value="jpg"/>
+            </div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Compression Quality</label>
+              <div class="ec-slider-container">
+                <input type="range" id="ecQuality0" min="1" max="100" value="85" oninput="ecUpdateQuality()"/>
+                <span class="ec-slider-value" id="ecQualityValue0">85%</span>
+              </div>
+              <p class="ec-text-muted">85% offers the best balance between quality and size</p>
+            </div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Resize (Width in pixels)</label>
+              <input type="number" id="ecResizeWidth0" min="100" max="4000" value="0" placeholder="0 = Keep original"/>
+              <p class="ec-text-muted">Leave as 0 to keep original size</p>
+            </div>
+          </div>
+          <div class="ec-button-group">
+            <button type="button" class="ec-button ec-button-primary" onclick="ecConvertImages()">&#10003; Convert Images</button>
+            <button type="button" class="ec-button ec-button-secondary" onclick="ecClearTab(0)">&#128465;&#65039; Clear All</button>
+          </div>
+        </div>
+
+        <!-- TAB 1: DOCUMENTS -->
+        <div class="ec-tab-content" id="ecTab1">
+          <div class="ec-form-group">
+            <div class="ec-upload-zone" id="ecUploadZone1" onclick="document.getElementById('ecFileInput1').click()">
+              <div class="ec-upload-icon">&#128196;</div>
+              <div class="ec-upload-text">Select Documents</div>
+              <div class="ec-upload-subtext">DOCX, DOC, PDF, TXT, PPTX</div>
+            </div>
+            <input type="file" id="ecFileInput1" accept=".docx,.doc,.pdf,.txt,.pptx" onchange="ecHandleDocumentUpload(event)"/>
+          </div>
+          <div id="ecDocumentPreview"></div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#9881;&#65039; Document Settings</div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Convert to:</label>
+              <div class="ec-format-grid">
+                <div class="ec-format-badge selected" onclick="ecSelectDocFormat('pdf',this)">PDF</div>
+                <div class="ec-format-badge" onclick="ecSelectDocFormat('docx',this)">DOCX</div>
+                <div class="ec-format-badge" onclick="ecSelectDocFormat('pptx',this)">PPTX</div>
+                <div class="ec-format-badge" onclick="ecSelectDocFormat('html',this)">HTML</div>
+                <div class="ec-format-badge" onclick="ecSelectDocFormat('txt',this)">TXT</div>
+              </div>
+              <input type="hidden" id="ecSelectedDocFormat" value="pdf"/>
+            </div>
+          </div>
+          <div class="ec-button-group">
+            <button type="button" class="ec-button ec-button-primary" onclick="ecConvertDocument()">&#10003; Convert Document</button>
+            <button type="button" class="ec-button ec-button-secondary" onclick="ecClearTab(1)">&#128465;&#65039; Clear</button>
+          </div>
+        </div>
+
+        <!-- TAB 2: SHEETS -->
+        <div class="ec-tab-content" id="ecTab2">
+          <div class="ec-form-group">
+            <div class="ec-upload-zone" id="ecUploadZone2" onclick="document.getElementById('ecFileInput2').click()">
+              <div class="ec-upload-icon">&#128202;</div>
+              <div class="ec-upload-text">Select Spreadsheets</div>
+              <div class="ec-upload-subtext">XLSX, XLS, CSV, ODS</div>
+            </div>
+            <input type="file" id="ecFileInput2" accept=".xlsx,.xls,.csv,.ods" onchange="ecHandleSheetUpload(event)"/>
+          </div>
+          <div id="ecSheetPreview"></div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#9881;&#65039; Spreadsheet Settings</div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Convert to:</label>
+              <div class="ec-format-grid">
+                <div class="ec-format-badge selected" onclick="ecSelectSheetFormat('csv',this)">CSV</div>
+                <div class="ec-format-badge" onclick="ecSelectSheetFormat('xlsx',this)">XLSX</div>
+                <div class="ec-format-badge" onclick="ecSelectSheetFormat('xls',this)">XLS</div>
+                <div class="ec-format-badge" onclick="ecSelectSheetFormat('ods',this)">ODS</div>
+                <div class="ec-format-badge" onclick="ecSelectSheetFormat('html',this)">HTML</div>
+                <div class="ec-format-badge" onclick="ecSelectSheetFormat('pdf',this)">PDF</div>
+              </div>
+              <input type="hidden" id="ecSelectedSheetFormat" value="csv"/>
+            </div>
+          </div>
+          <div class="ec-button-group">
+            <button type="button" class="ec-button ec-button-primary" onclick="ecConvertSheet()">&#10003; Convert Spreadsheet</button>
+            <button type="button" class="ec-button ec-button-secondary" onclick="ecClearTab(2)">&#128465;&#65039; Clear</button>
+          </div>
+        </div>
+
+        <!-- TAB 3: COMPRESS -->
+        <div class="ec-tab-content" id="ecTab3">
+          <div class="ec-form-group">
+            <div class="ec-upload-zone" id="ecUploadZone3" onclick="document.getElementById('ecFileInput3').click()">
+              <div class="ec-upload-icon">&#128230;</div>
+              <div class="ec-upload-text">Select Files to Compress</div>
+              <div class="ec-upload-subtext">Any file type</div>
+            </div>
+            <input type="file" id="ecFileInput3" multiple="multiple" onchange="ecHandleCompressUpload(event)"/>
+          </div>
+          <div id="ecCompressFilesList"></div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#9881;&#65039; Compression Settings</div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Output File Name</label>
+              <input type="text" id="ecCompressFileName" placeholder="files"/>
+            </div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Format:</label>
+              <div class="ec-format-grid">
+                <div class="ec-format-badge selected" onclick="ecSelectCompressFormat('zip',this)">ZIP</div>
+                <div class="ec-format-badge" onclick="ecSelectCompressFormat('tar',this)">TAR</div>
+                <div class="ec-format-badge" onclick="ecSelectCompressFormat('gz',this)">GZ (Single)</div>
+              </div>
+              <input type="hidden" id="ecSelectedCompressFormat" value="zip"/>
+            </div>
+          </div>
+          <div class="ec-button-group">
+            <button type="button" class="ec-button ec-button-primary" onclick="ecCompressFiles()">&#10003; Compress Now</button>
+            <button type="button" class="ec-button ec-button-secondary" onclick="ecClearTab(3)">&#128465;&#65039; Clear All</button>
+          </div>
+        </div>
+
+        <!-- TAB 4: DECOMPRESS -->
+        <div class="ec-tab-content" id="ecTab4">
+          <div class="ec-form-group">
+            <div class="ec-upload-zone" id="ecUploadZone4" onclick="document.getElementById('ecFileInput4').click()">
+              <div class="ec-upload-icon">&#128194;</div>
+              <div class="ec-upload-text">Select a Compressed File</div>
+              <div class="ec-upload-subtext">ZIP, TAR, GZ, TAR.GZ</div>
+            </div>
+            <input type="file" id="ecFileInput4" accept=".zip,.tar,.gz,.tgz" onchange="ecHandleDecompressUpload(event)"/>
+          </div>
+          <div id="ecDecompressPreview"></div>
+          <div id="ecDecompressFilesList"></div>
+          <div id="ecDecompressActions" style="display:none; margin-top:20px; padding:20px; background:rgba(255,107,53,0.05); border-radius:12px; border:1px solid var(--ec-border);">
+            <div class="ec-form-group">
+              <label class="ec-form-label">Download All Files as ZIP (Folder Name)</label>
+              <input type="text" id="ecDecompressZipName" placeholder="extracted_files"/>
+            </div>
+            <button type="button" class="ec-button ec-button-primary" onclick="ecDownloadAllDecompressed()">&#11015;&#65039; Download All as ZIP</button>
+          </div>
+          <div class="ec-button-group">
+            <button type="button" class="ec-button ec-button-primary" onclick="ecDecompressFiles()">&#10003; List Files</button>
+            <button type="button" class="ec-button ec-button-secondary" onclick="ecClearTab(4)">&#128465;&#65039; Clear</button>
+          </div>
+        </div>
+
+        <!-- TAB 5: ADVANCED -->
+        <div class="ec-tab-content" id="ecTab5">
+          <div class="ec-card">
+            <div class="ec-card-title">&#128296; Advanced Tools</div>
+            <p class="ec-text-muted">Additional functionalities for file conversion and processing.</p>
+          </div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#128203; Batch Conversion</div>
+            <div class="ec-form-group">
+              <div class="ec-upload-zone" id="ecUploadZoneBatch" onclick="document.getElementById('ecFileInputBatch').click()">
+                <div class="ec-upload-icon">&#128193;</div>
+                <div class="ec-upload-text">Click or drag files here</div>
+              </div>
+              <input type="file" id="ecFileInputBatch" multiple="multiple" onchange="ecHandleBatchUpload(event)"/>
+            </div>
+            <div id="ecBatchFilesList"></div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Output Format</label>
+              <select id="ecBatchOutputFormat">
+                <option value="jpg">JPG (Images)</option>
+                <option value="png">PNG (Images)</option>
+                <option value="webp">WebP (Images)</option>
+                <option value="pdf">PDF (Documents)</option>
+                <option value="csv">CSV (Spreadsheets)</option>
+                <option value="xlsx">XLSX (Spreadsheets)</option>
+                <option value="html">HTML (Documents)</option>
+                <option value="txt">TXT (Documents)</option>
+              </select>
+            </div>
+            <div class="ec-button-group">
+              <button type="button" class="ec-button ec-button-primary" onclick="ecConvertBatch()">&#10003; Convert Batch</button>
+              <button type="button" class="ec-button ec-button-secondary" onclick="ecClearBatch()">&#128465;&#65039; Clear</button>
+            </div>
+          </div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#127912; Image Editor</div>
+            <div class="ec-form-group">
+              <div class="ec-upload-zone" id="ecUploadZoneEditor" onclick="document.getElementById('ecFileInputEditor').click()">
+                <div class="ec-upload-icon">&#128444;&#65039;</div>
+                <div class="ec-upload-text">Select image to edit</div>
+              </div>
+              <input type="file" id="ecFileInputEditor" accept="image/*" onchange="ecHandleEditorUpload(event)"/>
+            </div>
+            <div id="ecEditorPreview"></div>
+            <div id="ecEditorControls" style="display:none;">
+              <div class="ec-settings-grid">
+                <div class="ec-settings-item">
+                  <label class="ec-settings-label">Rotation: <span id="ecRotationValue">0&#176;</span></label>
+                  <input type="range" id="ecRotationSlider" min="0" max="360" value="0" oninput="ecUpdateEditorPreview()"/>
+                </div>
+                <div class="ec-settings-item">
+                  <label class="ec-settings-label">Brightness: <span id="ecBrightnessValue">100%</span></label>
+                  <input type="range" id="ecBrightnessSlider" min="50" max="150" value="100" oninput="ecUpdateEditorPreview()"/>
+                </div>
+                <div class="ec-settings-item">
+                  <label class="ec-settings-label">Contrast: <span id="ecContrastValue">100%</span></label>
+                  <input type="range" id="ecContrastSlider" min="50" max="150" value="100" oninput="ecUpdateEditorPreview()"/>
+                </div>
+                <div class="ec-settings-item">
+                  <label class="ec-settings-label">Saturation: <span id="ecSaturationValue">100%</span></label>
+                  <input type="range" id="ecSaturationSlider" min="50" max="150" value="100" oninput="ecUpdateEditorPreview()"/>
+                </div>
+              </div>
+              <div class="ec-button-group">
+                <button type="button" class="ec-button ec-button-primary" onclick="ecSaveEditedImage()">&#11015;&#65039; Save Edited Image</button>
+                <button type="button" class="ec-button ec-button-secondary" onclick="ecResetEditor()">&#8635; Reset</button>
+              </div>
+            </div>
+          </div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#128260; Data Converter (JSON/CSV/XML)</div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Paste your data (JSON or CSV):</label>
+              <textarea id="ecDataInput" rows="6" placeholder="Paste JSON or CSV data here..."></textarea>
+            </div>
+            <div class="ec-form-group">
+              <label class="ec-form-label">Convert to:</label>
+              <div class="ec-format-grid">
+                <div class="ec-format-badge selected" onclick="ecSelectDataFormat('json',this)">JSON</div>
+                <div class="ec-format-badge" onclick="ecSelectDataFormat('csv',this)">CSV</div>
+                <div class="ec-format-badge" onclick="ecSelectDataFormat('xml',this)">XML</div>
+              </div>
+              <input type="hidden" id="ecSelectedDataFormat" value="json"/>
+            </div>
+            <div class="ec-button-group">
+              <button type="button" class="ec-button ec-button-primary" onclick="ecConvertData()">&#10003; Convert Data</button>
+            </div>
+            <div id="ecDataOutput"></div>
+          </div>
+        </div>
+
+        <!-- TAB 6: LEGAL -->
+        <div class="ec-tab-content" id="ecTab6">
+          <div class="ec-card">
+            <div class="ec-card-title">&#128274; Privacy Policy</div>
+            <div class="ec-legal-section">
+              <div class="ec-legal-heading">1. Introduction</div>
+              <p class="ec-text-muted">Easy Convert is committed to protecting your privacy. All file processing occurs entirely in your browser.</p>
+            </div>
+            <div class="ec-legal-section">
+              <div class="ec-legal-heading">2. No File Storage</div>
+              <p class="ec-text-muted">We do not upload, store, or have access to any files you process. Your files never leave your device.</p>
+            </div>
+            <div class="ec-legal-section">
+              <div class="ec-legal-heading">3. Your Rights (GDPR / LGPD / CCPA)</div>
+              <p class="ec-text-muted">Contact us at <a href="mailto:zcheaproducts@gmail.com">zcheaproducts@gmail.com</a> and we will respond within 30 days.</p>
+            </div>
+          </div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#128203; Terms of Service</div>
+            <div class="ec-legal-section">
+              <div class="ec-legal-heading">1. Acceptance</div>
+              <p class="ec-text-muted">By using Easy Convert you agree to these Terms.</p>
+            </div>
+            <div class="ec-legal-section">
+              <div class="ec-legal-heading">2. Disclaimer</div>
+              <p class="ec-text-muted">Provided "as is" without warranties. We are not liable for data loss or conversion errors.</p>
+            </div>
+          </div>
+          <div class="ec-card">
+            <div class="ec-card-title">&#128236; Support &amp; Contact</div>
+            <a href="mailto:zcheaproducts@gmail.com?subject=Easy%20Convert%20Support" class="ec-button ec-button-primary" style="text-decoration:none; display:inline-flex;">
+              &#9993; Send Email
+            </a>
+            <p class="ec-text-muted" style="margin-top:12px;">Or copy: <strong>zcheaproducts@gmail.com</strong></p>
+          </div>
+        </div>
+
+      </div><!-- /ec-content -->
+    </div><!-- /ec-workspace -->
+
+    <!-- SIDEBAR RIGHT -->
+    <div class="ec-sidebar-right">
+      <div class="ad-container-vertical">
+        <div>
+          <div style="font-size:32px; margin-bottom:12px;">&#10024;</div>
+          <div style="font-weight:600; margin-bottom:8px; color:var(--ec-text); font-size:16px;">Elite Edition</div>
+          <p style="font-size:12px; color:var(--ec-muted); line-height:1.6; margin-bottom:16px;">
+            Enjoy maximum performance and luxury design in all your conversions.
+          </p>
+          <button type="button" class="ec-button ec-button-primary" style="width:100%; justify-content:center;" onclick="ecHandleFavorite()">&#10084;&#65039; Favorite</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ec-container -->
+</div><!-- /ec-app -->
+
+<!-- FAVORITE MODAL -->
+<div id="ecFavoriteModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:20px; padding:40px 32px; max-width:380px; width:90%; text-align:center; box-shadow:0 24px 60px rgba(255,107,53,0.25);">
+    <div style="font-size:56px; margin-bottom:16px;">&#10084;&#65039;</div>
+    <div style="font-size:20px; font-weight:700; color:#1F2937; margin-bottom:10px;">Thank you!</div>
+    <p style="font-size:13px; color:#6B7280; line-height:1.7; margin-bottom:24px;" id="ecFavModalMsg">Press <strong>Ctrl + D</strong> to bookmark this page.</p>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button type="button" onclick="ecCloseFavModal()" style="padding:11px 24px; border-radius:10px; border:none; background:linear-gradient(135deg,#FF6B35,#7C3AED); color:#fff; font-weight:600; cursor:pointer; font-size:13px;">&#10003; Got it!</button>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+//  GLOBAL STATE
+var ecFiles = { 0:[], 1:[], 2:[], 3:[], 4:[], batch:[], editor:null };
+var ecCurrentTab = 0;
+var ecEditorImage = null;
+var ecEditorCanvas = null;
+var ecDecompressStore = {};
+
+function ecInit() {
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdfjs-dist/3.11.174/pdf.worker.min.js';
+  }
+  ecInitDragAndDrop();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', ecInit);
+} else {
+  ecInit();
+}
+
+//  NAVIGATION
+var EC_HEADERS = [
+  'Convert & Edit Images',
+  'Convert Documents',
+  'Spreadsheets & Presentations',
+  'Compress Files',
+  'Decompress Files',
+  'Advanced Tools',
+  'Legal & Support'
+];
+var EC_ICONS = [
+  '\uD83D\uDDBC\uFE0F',
+  '\uD83D\uDCC4',
+  '\uD83D\uDCCA',
+  '\uD83D\uDCE6',
+  '\uD83D\uDCC2',
+  '\u2699\uFE0F',
+  '\u2696\uFE0F'
+];
+
+function ecSwitchTab(idx) {
+  try {
+    var app     = document.getElementById('ec-app');
+    var tabs    = app.querySelectorAll('.ec-tab-content');
+    var navTabs = app.querySelectorAll('.ec-nav-tab');
+    if (!tabs[idx] || !navTabs[idx]) return;
+
+    for (var i = 0; i < tabs.length; i++)    tabs[i].classList.remove('active');
+    for (var j = 0; j < navTabs.length; j++) navTabs[j].classList.remove('active');
+
+    tabs[idx].classList.add('active');
+    navTabs[idx].classList.add('active');
+
+    document.getElementById('ecHeaderIcon').textContent  = EC_ICONS[idx];
+    document.getElementById('ecHeaderTitle').textContent = EC_HEADERS[idx];
+    ecCurrentTab = idx;
+  } catch(e) { console.error('ecSwitchTab error:', e); }
+}
+
+//  HELPERS
+function ecDlBlob(blob, name) {
+  try {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      if (a.parentNode) a.parentNode.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }, 300);
+  } catch(err) { ecShowAlert('Download failed. Try again.', 'error'); }
+}
+
+function ecDlText(text, name, type) {
+  ecDlBlob(new Blob([text], {type: type}), name);
+}
+
+function ecShowAlert(msg, type) {
+  var div = document.createElement('div');
+  div.className = 'ec-alert ec-alert-' + type;
+  div.innerHTML = '<span>' + msg + '</span>';
+  var content = document.getElementById('ecContent');
+  if (content) {
+    content.insertBefore(div, content.firstChild);
+    setTimeout(function() { if (div.parentNode) div.parentNode.removeChild(div); }, 3500);
+  }
+}
+
+//  FORMAT SELECTION
+function ecSelectFormat(fmt, el) {
+  var badges = document.querySelectorAll('#ecImageFormats .ec-format-badge');
+  for (var i = 0; i < badges.length; i++) badges[i].classList.remove('selected');
+  el.classList.add('selected');
+  document.getElementById('ecSelectedImageFormat').value = fmt;
+}
+function ecSelectDocFormat(fmt, el) {
+  var badges = el.parentElement.querySelectorAll('.ec-format-badge');
+  for (var i = 0; i < badges.length; i++) badges[i].classList.remove('selected');
+  el.classList.add('selected');
+  document.getElementById('ecSelectedDocFormat').value = fmt;
+}
+function ecSelectSheetFormat(fmt, el) {
+  var badges = el.parentElement.querySelectorAll('.ec-format-badge');
+  for (var i = 0; i < badges.length; i++) badges[i].classList.remove('selected');
+  el.classList.add('selected');
+  document.getElementById('ecSelectedSheetFormat').value = fmt;
+}
+function ecSelectCompressFormat(fmt, el) {
+  var badges = el.parentElement.querySelectorAll('.ec-format-badge');
+  for (var i = 0; i < badges.length; i++) badges[i].classList.remove('selected');
+  el.classList.add('selected');
+  document.getElementById('ecSelectedCompressFormat').value = fmt;
+}
+function ecSelectDataFormat(fmt, el) {
+  var badges = el.parentElement.querySelectorAll('.ec-format-badge');
+  for (var i = 0; i < badges.length; i++) badges[i].classList.remove('selected');
+  el.classList.add('selected');
+  document.getElementById('ecSelectedDataFormat').value = fmt;
+}
+
+//  IMAGES
+var EC_IMG_MIME = {
+  jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png',
+  webp:'image/webp', gif:'image/png', bmp:'image/png',
+  tiff:'image/png', ico:'image/png', avif:'image/webp', svg:'image/png'
+};
+
+function ecUpdateQuality() {
+  var q = document.getElementById('ecQuality0').value;
+  document.getElementById('ecQualityValue0').textContent = q + '%';
+}
+
+function ecHandleImageUpload(event, tabIndex) {
+  var files = Array.from(event.target.files);
+  ecFiles[tabIndex] = ecFiles[tabIndex].concat(files);
+  ecDisplayThumbnails(tabIndex);
+}
+
+function ecDisplayThumbnails(tabIndex) {
+  var container = document.getElementById('ecThumbnails' + tabIndex);
+  if (!container) return;
+  container.innerHTML = '';
+  ecFiles[tabIndex].forEach(function(file, index) {
+    var reader = new FileReader();
+    reader.onload = (function(f, idx) {
+      return function(e) {
+        var div = document.createElement('div');
+        div.className = 'ec-thumbnail-item';
+        div.innerHTML =
+          '<img src="' + e.target.result + '" alt="' + f.name + '"/>' +
+          '<div class="ec-thumbnail-controls">' +
+            '<button type="button" class="ec-control-btn" onclick="ecDlFile(' + tabIndex + ',' + idx + ')">&#11015;&#65039;</button>' +
+            '<button type="button" class="ec-control-btn delete" onclick="ecRemoveFile(' + tabIndex + ',' + idx + ')">&#128465;&#65039;</button>' +
+          '</div>';
+        container.appendChild(div);
+      };
+    })(file, index);
+    reader.readAsDataURL(file);
+  });
+}
+
+function ecConvertImages() {
+  if (ecFiles[0].length === 0) { ecShowAlert('Please select at least one image', 'error'); return; }
+  var format  = document.getElementById('ecSelectedImageFormat').value;
+  var quality = parseInt(document.getElementById('ecQuality0').value) / 100;
+  var resizeW = parseInt(document.getElementById('ecResizeWidth0').value) || 0;
+  ecShowAlert('Converting images...', 'info');
+  var processed = 0, total = ecFiles[0].length;
+
+  ecFiles[0].forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var w = img.width, h = img.height;
+        if (resizeW > 0) { w = resizeW; h = Math.round((img.height * resizeW) / img.width); }
+        canvas.width = w || 1; canvas.height = h || 1;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        var mime = EC_IMG_MIME[format] || 'image/png';
+        var qualArg = (mime === 'image/jpeg' || mime === 'image/webp') ? quality : undefined;
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            var du = canvas.toDataURL('image/png');
+            var bs = atob(du.split(',')[1]);
+            var ia = new Uint8Array(bs.length);
+            for (var i = 0; i < bs.length; i++) ia[i] = bs.charCodeAt(i);
+            blob = new Blob([ia], {type:'image/png'});
+          }
+          ecDlBlob(blob, file.name.replace(/\.[^.]+$/, '') + '.' + format);
+          if (++processed === total) ecShowAlert('All images converted!', 'success');
+        }, mime, qualArg);
+      };
+      img.onerror = function() { ecShowAlert('Failed to load: ' + file.name, 'warning'); processed++; };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+//  DOCUMENTS
+function ecHandleDocumentUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  ecFiles[1] = [file];
+  document.getElementById('ecDocumentPreview').innerHTML =
+    '<div class="ec-file-item">' +
+      '<div class="ec-file-info"><span class="ec-file-icon">&#128196;</span>' +
+        '<div class="ec-file-details">' +
+          '<div class="ec-file-name">' + file.name + '</div>' +
+          '<div class="ec-file-size">' + (file.size/1024).toFixed(2) + ' KB</div>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="ec-file-action-btn" onclick="ecRemoveFile(1,0)">&#128465;&#65039;</button>' +
+    '</div>';
+}
+
+function ecConvertDocument() {
+  if (!ecFiles[1] || ecFiles[1].length === 0) { ecShowAlert('Please select a document first', 'error'); return; }
+  var file     = ecFiles[1][0];
+  var format   = document.getElementById('ecSelectedDocFormat').value;
+  var baseName = file.name.replace(/\.[^.]+$/, '');
+  var ext      = file.name.split('.').pop().toLowerCase();
+  ecShowAlert('Converting document...', 'info');
+
+  function htmlToPdf(htmlStr, outName) {
+    if (typeof html2pdf === 'undefined') { ecShowAlert('PDF library not loaded yet. Please wait and try again.', 'error'); return; }
+    var el = document.createElement('div');
+    el.innerHTML = htmlStr;
+    el.style.padding = '20px';
+    html2pdf().set({margin:10, filename:outName, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4'}}).from(el).save();
+  }
+  function textToPdf(text, outName) {
+    if (typeof html2pdf === 'undefined') { ecShowAlert('PDF library not loaded yet. Please wait and try again.', 'error'); return; }
+    var el = document.createElement('pre');
+    el.style.cssText = 'padding:20px;font-family:monospace;font-size:12px;white-space:pre-wrap;';
+    el.textContent = text;
+    html2pdf().set({margin:10, filename:outName}).from(el).save();
+  }
+
+  var reader = new FileReader();
+
+  if (ext === 'docx' || ext === 'doc') {
+    reader.onload = function(e) {
+      if (typeof mammoth === 'undefined') { ecShowAlert('mammoth.js not loaded. Please refresh.', 'error'); return; }
+      mammoth.convertToHtml({arrayBuffer: e.target.result})
+        .then(function(result) {
+          if (!result || !result.value) throw new Error('Empty document');
+          var html = result.value;
+          var text = html.replace(/<[^>]+>/g, '');
+          if      (format === 'pdf')  { htmlToPdf(html, baseName+'.pdf'); ecShowAlert('Converted to PDF!','success'); }
+          else if (format === 'html') { ecDlBlob(new Blob([html],{type:'text/html'}), baseName+'.html'); ecShowAlert('Converted to HTML!','success'); }
+          else if (format === 'txt')  { ecDlBlob(new Blob([text],{type:'text/plain'}), baseName+'.txt'); ecShowAlert('Converted to TXT!','success'); }
+          else if (format === 'docx') { ecMakeDocx(text, baseName); }
+          else if (format === 'pptx') { ecMakePptx(text, baseName); }
+        })
+        .catch(function(err) { ecShowAlert('Error reading document: ' + err.message, 'error'); });
+    };
+    reader.readAsArrayBuffer(file);
+
+  } else if (ext === 'pptx') {
+    reader.onload = function(e) {
+      JSZip.loadAsync(e.target.result).then(function(zip) {
+        var slidePromises = [];
+        zip.forEach(function(path, f) {
+          if (path.match(/^ppt\/slides\/slide[0-9]+\.xml$/)) {
+            slidePromises.push(f.async('string'));
+          }
+        });
+        Promise.all(slidePromises).then(function(slides) {
+          var text = slides.map(function(s) {
+            return s.replace(/<a:t>/g,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+          }).join('\n\n');
+          if      (format === 'txt')  { ecDlBlob(new Blob([text],{type:'text/plain'}), baseName+'.txt'); ecShowAlert('Converted to TXT!','success'); }
+          else if (format === 'html') { ecDlBlob(new Blob(['<!DOCTYPE html><html><body><pre style="font-family:sans-serif;white-space:pre-wrap;">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre></body></html>'],{type:'text/html'}), baseName+'.html'); ecShowAlert('Converted to HTML!','success'); }
+          else if (format === 'pdf')  { textToPdf(text, baseName+'.pdf'); ecShowAlert('Converted to PDF!','success'); }
+          else if (format === 'docx') { ecMakeDocx(text, baseName); }
+          else if (format === 'pptx') { ecDlBlob(new Blob([e.target.result],{type:'application/vnd.openxmlformats-officedocument.presentationml.presentation'}), baseName+'.pptx'); ecShowAlert('PPTX downloaded!','success'); }
+        });
+      }).catch(function(err){ ecShowAlert('Error reading PPTX: '+err.message,'error'); });
+    };
+    reader.readAsArrayBuffer(file);
+
+  } else if (ext === 'txt') {
+    reader.onload = function(e) {
+      var text = e.target.result;
+      if      (format === 'pdf')  { textToPdf(text, baseName+'.pdf'); ecShowAlert('Converted to PDF!','success'); }
+      else if (format === 'html') { ecDlBlob(new Blob(['<!DOCTYPE html><html><body><pre style="font-family:sans-serif;white-space:pre-wrap;">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre></body></html>'],{type:'text/html'}), baseName+'.html'); ecShowAlert('Converted to HTML!','success'); }
+      else if (format === 'docx') { ecMakeDocx(text, baseName); }
+      else if (format === 'pptx') { ecMakePptx(text, baseName); }
+      else { ecDlBlob(new Blob([text],{type:'text/plain'}), baseName+'.txt'); ecShowAlert('Saved as TXT!','success'); }
+    };
+    reader.readAsText(file);
+
+  } else if (ext === 'pdf') {
+    reader.onload = function(e) {
+      if (typeof pdfjsLib === 'undefined') { ecShowAlert('PDF.js not loaded. Please refresh.', 'error'); return; }
+      if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdfjs-dist/3.11.174/pdf.worker.min.js';
+      }
+      var typedArr = new Uint8Array(e.target.result);
+      pdfjsLib.getDocument({data: typedArr}).promise.then(function(pdf) {
+        var pps = [];
+        for (var i = 1; i <= pdf.numPages; i++) {
+          pps.push(pdf.getPage(i).then(function(pg) {
+            return pg.getTextContent().then(function(tc) {
+              return tc.items.map(function(it){ return it.str; }).join(' ');
+            });
+          }));
+        }
+        Promise.all(pps).then(function(pages) {
+          var text = pages.join('\n\n');
+          if      (format === 'txt')  { ecDlBlob(new Blob([text],{type:'text/plain'}), baseName+'.txt'); ecShowAlert('Text extracted!','success'); }
+          else if (format === 'html') { ecDlBlob(new Blob(['<!DOCTYPE html><html><body><pre style="font-family:sans-serif;white-space:pre-wrap;">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre></body></html>'],{type:'text/html'}), baseName+'.html'); ecShowAlert('PDF to HTML!','success'); }
+          else if (format === 'pdf')  { ecDlBlob(new Blob([e.target.result],{type:'application/pdf'}), baseName+'.pdf'); ecShowAlert('PDF downloaded!','success'); }
+          else if (format === 'docx') { ecMakeDocx(text, baseName); }
+          else if (format === 'pptx') { ecMakePptx(text, baseName); }
+        });
+      }).catch(function(err) { ecShowAlert('Error reading PDF: '+err.message,'error'); });
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    ecShowAlert('Unsupported format: .' + ext, 'warning');
+  }
+}
+
+function ecMakeDocx(text, baseName) {
+  var xmlBody = text.split('\n').map(function(l) {
+    return '<w:p><w:r><w:t xml:space="preserve">' +
+      l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+      '</w:t></w:r></w:p>';
+  }).join('');
+  var docXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + xmlBody + '<w:sectPr/></w:body></w:document>';
+  var zip = new JSZip();
+  zip.file('word/document.xml', docXml);
+  zip.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+  zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+  zip.file('word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>');
+  zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+    .then(function(blob){ ecDlBlob(blob, baseName+'.docx'); ecShowAlert('Converted to DOCX!','success'); });
+}
+
+function ecMakePptx(text, baseName) {
+  var lines = text.split('\n').filter(function(l){ return l.trim(); });
+  if (lines.length === 0) lines = ['(empty)'];
+  var slides = lines.map(function(line, i) {
+    var safe = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><p:cSld><p:spTree><p:sp><p:nvSpPr><p:cNvPr id="'+(i+2)+'" name="T'+(i+1)+'"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="457200" y="457200"/><a:ext cx="8229600" cy="4525963"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:t>'+safe+'</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>';
+  });
+  var slideRels  = slides.map(function(_,i){ return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide'+(i+1)+'.xml"/>'; }).join('');
+  var slideTypes = slides.map(function(_,i){ return '<Override PartName="/ppt/slides/slide'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>'; }).join('');
+  var slideIds   = slides.map(function(_,i){ return '<p:sldId id="'+(i+256)+'" r:id="rId'+(i+1)+'"/>'; }).join('');
+  var presXml    = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><p:sldSz cx="9144000" cy="6858000"/><p:sldIdLst>'+slideIds+'</p:sldIdLst></p:presentation>';
+  var zip = new JSZip();
+  zip.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>'+slideTypes+'</Types>');
+  zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/></Relationships>');
+  zip.file('ppt/presentation.xml', presXml);
+  zip.file('ppt/_rels/presentation.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+slideRels+'</Relationships>');
+  slides.forEach(function(slideXml, i) {
+    zip.file('ppt/slides/slide'+(i+1)+'.xml', slideXml);
+    zip.file('ppt/slides/_rels/slide'+(i+1)+'.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>');
+  });
+  zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.presentationml.presentation'})
+    .then(function(blob){ ecDlBlob(blob, baseName+'.pptx'); ecShowAlert('Converted to PPTX!','success'); });
+}
+
+//  SPREADSHEETS
+function ecHandleSheetUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  ecFiles[2] = [file];
+  document.getElementById('ecSheetPreview').innerHTML =
+    '<div class="ec-file-item"><div class="ec-file-info"><span>&#128202;</span><div class="ec-file-details"><div class="ec-file-name">' + file.name + '</div><div class="ec-file-size">'+(file.size/1024).toFixed(2)+' KB</div></div></div>' +
+    '<button type="button" class="ec-file-action-btn" onclick="ecRemoveFile(2,0)">&#128465;&#65039;</button></div>';
+}
+
+function ecConvertSheet() {
+  if (!ecFiles[2] || ecFiles[2].length === 0) { ecShowAlert('Please select a spreadsheet', 'error'); return; }
+  if (typeof XLSX === 'undefined') { ecShowAlert('XLSX library not loaded. Please refresh.', 'error'); return; }
+  var file     = ecFiles[2][0];
+  var format   = document.getElementById('ecSelectedSheetFormat').value;
+  var baseName = file.name.replace(/\.[^.]+$/, '');
+  ecShowAlert('Converting spreadsheet...', 'info');
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb   = XLSX.read(data, {type:'array'});
+      var ws   = wb.Sheets[wb.SheetNames[0]];
+      if (format === 'csv')       { ecDlText(XLSX.utils.sheet_to_csv(ws), baseName+'.csv', 'text/csv'); ecShowAlert('Converted to CSV!','success'); }
+      else if (format === 'html') { ecDlText(XLSX.utils.sheet_to_html(ws), baseName+'.html', 'text/html'); ecShowAlert('Converted to HTML!','success'); }
+      else if (format === 'pdf')  {
+        var div = document.createElement('div');
+        div.innerHTML = XLSX.utils.sheet_to_html(ws);
+        div.style.padding = '20px';
+        html2pdf().from(div).set({margin:10, filename:baseName+'.pdf'}).save();
+        ecShowAlert('Converted to PDF!','success');
+      } else {
+        var bookType = format === 'ods' ? 'ods' : (format === 'xls' ? 'xls' : 'xlsx');
+        var mimeMap  = {xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', xls:'application/vnd.ms-excel', ods:'application/vnd.oasis.opendocument.spreadsheet'};
+        var wbOut    = XLSX.write(wb, {bookType:bookType, type:'array'});
+        ecDlBlob(new Blob([wbOut],{type:mimeMap[format]||mimeMap.xlsx}), baseName+'.'+format);
+        ecShowAlert('Converted to '+format.toUpperCase()+'!','success');
+      }
+    } catch(err) { ecShowAlert('Conversion error: '+err.message,'error'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+//  COMPRESS
+function ecHandleCompressUpload(event) {
+  ecFiles[3] = Array.from(event.target.files);
+  ecRenderCompressList();
+}
+function ecRenderCompressList() {
+  var c = document.getElementById('ecCompressFilesList');
+  c.innerHTML = '';
+  ecFiles[3].forEach(function(f, i) {
+    var div = document.createElement('div');
+    div.className = 'ec-file-item';
+    div.innerHTML = '<span>&#128196; ' + f.name + '</span><button type="button" class="ec-file-action-btn" onclick="ecRemoveFile(3,'+i+')">&#128465;&#65039;</button>';
+    c.appendChild(div);
+  });
+}
+function ecCompressFiles() {
+  if (ecFiles[3].length === 0) { ecShowAlert('Please select files','error'); return; }
+  var format = document.getElementById('ecSelectedCompressFormat').value;
+  var name   = document.getElementById('ecCompressFileName').value || 'files';
+  ecShowAlert('Compressing files...','info');
+
+  if (format === 'zip') {
+    var zip = new JSZip(), count = 0;
+    ecFiles[3].forEach(function(file) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        zip.file(file.name, e.target.result);
+        if (++count === ecFiles[3].length) {
+          zip.generateAsync({type:'blob'}).then(function(blob){ ecDlBlob(blob, name+'.zip'); ecShowAlert('ZIP created!','success'); });
+        }
+      };
+      r.readAsArrayBuffer(file);
+    });
+
+  } else if (format === 'tar') {
+    var filesObj = {}, count2 = 0;
+    ecFiles[3].forEach(function(file) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        filesObj[file.name] = new Uint8Array(e.target.result);
+        if (++count2 === ecFiles[3].length) {
+          try {
+            if (typeof fflate !== 'undefined' && typeof fflate.tarSync === 'function') {
+              var td = fflate.tarSync(filesObj);
+              ecDlBlob(new Blob([td]), name+'.tar');
+              ecShowAlert('TAR created!','success');
+            } else {
+              var zipFallback = new JSZip();
+              Object.keys(filesObj).forEach(function(n){ zipFallback.file(n, filesObj[n]); });
+              zipFallback.generateAsync({type:'blob'}).then(function(blob){ ecDlBlob(blob, name+'.tar.zip'); ecShowAlert('TAR not supported in this browser — saved as ZIP instead.','warning'); });
+            }
+          } catch(err) { ecShowAlert('TAR error: '+err.message,'error'); }
+        }
+      };
+      r.readAsArrayBuffer(file);
+    });
+
+  } else if (format === 'gz') {
+    if (ecFiles[3].length > 1) ecShowAlert('GZ supports a single file only. Using first file.','warning');
+    var file = ecFiles[3][0];
+    var r = new FileReader();
+    r.onload = function(e) {
+      try {
+        if (typeof fflate === 'undefined') { ecShowAlert('fflate not loaded.','error'); return; }
+        var c = fflate.gzipSync(new Uint8Array(e.target.result));
+        ecDlBlob(new Blob([c]), file.name+'.gz');
+        ecShowAlert('GZ created!','success');
+      } catch(err) { ecShowAlert('GZ error: '+err.message,'error'); }
+    };
+    r.readAsArrayBuffer(file);
+  }
+}
+
+//  DECOMPRESS
+function ecHandleDecompressUpload(event) {
+  var f = event.target.files[0];
+  if (!f) return;
+  ecFiles[4] = [f];
+  document.getElementById('ecDecompressPreview').innerHTML =
+    '<div class="ec-file-item"><span>&#128230; ' + f.name + '</span></div>';
+}
+function ecDecompressFiles() {
+  if (!ecFiles[4] || !ecFiles[4][0]) { ecShowAlert('Please select a compressed file','error'); return; }
+  var file = ecFiles[4][0], name = file.name.toLowerCase();
+  var reader = new FileReader();
+  ecDecompressStore = {};
+  document.getElementById('ecDecompressActions').style.display = 'none';
+  reader.onload = function(e) {
+    var list = document.getElementById('ecDecompressFilesList');
+    list.innerHTML = '<strong>Files Found:</strong>';
+    var uint8 = new Uint8Array(e.target.result);
+
+    if (name.endsWith('.zip')) {
+      JSZip.loadAsync(e.target.result).then(function(zip) {
+        window._ecZipRef = zip;
+        var names = Object.keys(zip.files).filter(function(p){ return !zip.files[p].dir; });
+        if (names.length === 0) { ecShowAlert('No files found in ZIP','warning'); return; }
+        var done = 0;
+        names.forEach(function(path) {
+          zip.files[path].async('uint8array').then(function(data) {
+            ecDecompressStore[path] = data;
+            var div = document.createElement('div');
+            div.className = 'ec-file-item';
+            var safeP = path.replace(/'/g,"\\'");
+            div.innerHTML = '<span>&#128196; ' + path + '</span>' +
+              '<button type="button" class="ec-file-action-btn" onclick="ecExtractZip(\'' + safeP + '\')">&#11015;&#65039;</button>';
+            list.appendChild(div);
+            if (++done >= names.length) document.getElementById('ecDecompressActions').style.display = 'block';
+          });
+        });
+      }).catch(function(err){ ecShowAlert('Error reading ZIP: '+err.message,'error'); });
+
+    } else if (name.endsWith('.tar.gz') || name.endsWith('.tgz')) {
+      try {
+        if (typeof fflate === 'undefined') { ecShowAlert('fflate not loaded.','error'); return; }
+        var decompressed = fflate.gunzipSync(uint8);
+        var files;
+        if (typeof fflate.untarSync === 'function') {
+          files = fflate.untarSync(decompressed);
+        } else {
+          ecShowAlert('TAR extraction not supported in this browser. Use a ZIP instead.','warning');
+          return;
+        }
+        ecDecompressStore = files;
+        Object.keys(files).forEach(function(path) {
+          var div = document.createElement('div');
+          div.className = 'ec-file-item';
+          var url = URL.createObjectURL(new Blob([files[path]]));
+          div.innerHTML = '<span>&#128196; ' + path + '</span>' +
+            '<a href="' + url + '" download="' + path.split('/').pop() + '" class="ec-file-action-btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">&#11015;&#65039;</a>';
+          list.appendChild(div);
+        });
+        document.getElementById('ecDecompressActions').style.display = 'block';
+      } catch(err){ ecShowAlert('Error decompressing: '+err.message,'error'); }
+
+    } else if (name.endsWith('.tar')) {
+      try {
+        if (typeof fflate === 'undefined' || typeof fflate.untarSync !== 'function') {
+          ecShowAlert('TAR extraction not supported in this browser.','warning'); return;
+        }
+        var files2 = fflate.untarSync(uint8);
+        ecDecompressStore = files2;
+        Object.keys(files2).forEach(function(path) {
+          var div = document.createElement('div');
+          div.className = 'ec-file-item';
+          var url = URL.createObjectURL(new Blob([files2[path]]));
+          div.innerHTML = '<span>&#128196; ' + path + '</span>' +
+            '<a href="' + url + '" download="' + path.split('/').pop() + '" class="ec-file-action-btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">&#11015;&#65039;</a>';
+          list.appendChild(div);
+        });
+        document.getElementById('ecDecompressActions').style.display = 'block';
+      } catch(err){ ecShowAlert('Error reading TAR: '+err.message,'error'); }
+
+    } else if (name.endsWith('.gz')) {
+      try {
+        if (typeof fflate === 'undefined') { ecShowAlert('fflate not loaded.','error'); return; }
+        var dec = fflate.gunzipSync(uint8);
+        var outName = file.name.replace(/\.gz$/i,'');
+        ecDecompressStore[outName] = dec;
+        var div = document.createElement('div');
+        div.className = 'ec-file-item';
+        var url = URL.createObjectURL(new Blob([dec]));
+        div.innerHTML = '<span>&#128196; ' + outName + '</span>' +
+          '<a href="' + url + '" download="' + outName + '" class="ec-file-action-btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">&#11015;&#65039;</a>';
+          list.appendChild(div);
+        document.getElementById('ecDecompressActions').style.display = 'block';
+      } catch(err){ ecShowAlert('Error reading GZ: '+err.message,'error'); }
+    } else {
+      ecShowAlert('Format not supported for browser decompression.','warning');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+function ecExtractZip(path) {
+  if (!window._ecZipRef) return;
+  window._ecZipRef.file(path).async('blob').then(function(blob){ ecDlBlob(blob, path.split('/').pop()); });
+}
+function ecDownloadAllDecompressed() {
+  if (Object.keys(ecDecompressStore).length === 0) { ecShowAlert('No files to download','error'); return; }
+  var zip = new JSZip();
+  var zipName = document.getElementById('ecDecompressZipName').value || 'extracted_files';
+  Object.keys(ecDecompressStore).forEach(function(path){ zip.file(path, ecDecompressStore[path]); });
+  zip.generateAsync({type:'blob'}).then(function(blob){ ecDlBlob(blob, zipName+'.zip'); ecShowAlert('All files downloaded!','success'); });
+}
+
+//  BATCH
+function ecHandleBatchUpload(event) {
+  ecFiles.batch = Array.from(event.target.files);
+  var list = document.getElementById('ecBatchFilesList');
+  list.innerHTML = '';
+  ecFiles.batch.forEach(function(f,i) {
+    var div = document.createElement('div');
+    div.className = 'ec-file-item';
+    div.innerHTML = '&#128196; ' + f.name + ' <button type="button" class="ec-file-action-btn" onclick="ecRemoveBatch('+i+')">&#128465;&#65039;</button>';
+    list.appendChild(div);
+  });
+}
+function ecRemoveBatch(i) { ecFiles.batch.splice(i,1); ecHandleBatchUpload({target:{files:ecFiles.batch}}); }
+function ecClearBatch()   { ecFiles.batch = []; document.getElementById('ecBatchFilesList').innerHTML = ''; ecShowAlert('Batch cleared!','info'); }
+function ecConvertBatch() {
+  if (ecFiles.batch.length === 0) { ecShowAlert('Please select files','error'); return; }
+  var format = document.getElementById('ecBatchOutputFormat').value;
+  ecShowAlert('Processing batch...','info');
+  var done = 0, total = ecFiles.batch.length;
+  ecFiles.batch.forEach(function(file) {
+    var baseName = file.name.replace(/\.[^.]+$/,'');
+    if (format === 'jpg' || format === 'png' || format === 'webp') {
+      var r = new FileReader();
+      r.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var c = document.createElement('canvas');
+          c.width = img.width; c.height = img.height;
+          c.getContext('2d').drawImage(img,0,0);
+          var mime = format === 'jpg' ? 'image/jpeg' : 'image/' + format;
+          c.toBlob(function(b){ if(b){ ecDlBlob(b, baseName+'.'+format); } if(++done===total) ecShowAlert('Batch completed!','success'); }, mime, 0.9);
+        };
+        img.src = e.target.result;
+      };
+      r.readAsDataURL(file);
+    } else if (format === 'pdf') {
+      var r2 = new FileReader();
+      r2.onload = function(e) {
+        var el = document.createElement('div');
+        el.style.padding = '20px';
+        el.innerHTML = '<h2>' + file.name + '</h2><pre style="white-space:pre-wrap;">' + String(e.target.result).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>';
+        html2pdf().set({filename:baseName+'.pdf'}).from(el).save();
+        if(++done===total) ecShowAlert('Batch completed!','success');
+      };
+      r2.readAsText(file);
+    } else if (format === 'txt') {
+      var r3 = new FileReader();
+      r3.onload = function(e){ ecDlBlob(new Blob([e.target.result],{type:'text/plain'}), baseName+'.txt'); if(++done===total) ecShowAlert('Batch completed!','success'); };
+      r3.readAsText(file);
+    } else if (format === 'html') {
+      var r4 = new FileReader();
+      r4.onload = function(e){ ecDlBlob(new Blob(['<!DOCTYPE html><html><body><pre style="white-space:pre-wrap;">'+String(e.target.result).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre></body></html>'],{type:'text/html'}), baseName+'.html'); if(++done===total) ecShowAlert('Batch completed!','success'); };
+      r4.readAsText(file);
+    } else if (format === 'xlsx') {
+      var r5 = new FileReader();
+      r5.onload = function(e){ try{ var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); var wbO=XLSX.write(wb,{bookType:'xlsx',type:'array'}); ecDlBlob(new Blob([wbO],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),baseName+'.xlsx'); }catch(err){} if(++done===total) ecShowAlert('Batch completed!','success'); };
+      r5.readAsArrayBuffer(file);
+    } else if (format === 'csv') {
+      var r6 = new FileReader();
+      r6.onload = function(e){ try{ var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); ecDlBlob(new Blob([XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]])],{type:'text/csv'}),baseName+'.csv'); }catch(err){} if(++done===total) ecShowAlert('Batch completed!','success'); };
+      r6.readAsArrayBuffer(file);
+    } else { if(++done===total) ecShowAlert('Batch completed!','success'); }
+  });
+}
+
+//  IMAGE EDITOR
+function ecHandleEditorUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  ecFiles.editor = file;
+  var r = new FileReader();
+  r.onload = function(e) {
+    ecEditorImage = new Image();
+    ecEditorImage.onload = function() {
+      document.getElementById('ecEditorControls').style.display = 'block';
+      ecUpdateEditorPreview();
+    };
+    ecEditorImage.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function ecUpdateEditorPreview() {
+  if (!ecEditorImage) return;
+  var rot = document.getElementById('ecRotationSlider').value;
+  var bri = document.getElementById('ecBrightnessSlider').value;
+  var con = document.getElementById('ecContrastSlider').value;
+  var sat = document.getElementById('ecSaturationSlider').value;
+  document.getElementById('ecRotationValue').textContent  = rot + '\u00B0';
+  document.getElementById('ecBrightnessValue').textContent = bri + '%';
+  document.getElementById('ecContrastValue').textContent   = con + '%';
+  document.getElementById('ecSaturationValue').textContent = sat + '%';
+  var canvas = document.createElement('canvas');
+  canvas.width = ecEditorImage.width; canvas.height = ecEditorImage.height;
+  var ctx = canvas.getContext('2d');
+  ctx.filter = 'brightness('+bri+'%) contrast('+con+'%) saturate('+sat+'%)';
+  ctx.translate(canvas.width/2, canvas.height/2);
+  ctx.rotate(rot * Math.PI / 180);
+  ctx.drawImage(ecEditorImage, -canvas.width/2, -canvas.height/2);
+  ecEditorCanvas = canvas;
+  document.getElementById('ecEditorPreview').innerHTML =
+    '<img src="' + canvas.toDataURL() + '" style="max-width:100%;border-radius:10px;"/>';
+}
+function ecSaveEditedImage() {
+  if (!ecEditorCanvas) return;
+  ecEditorCanvas.toBlob(function(blob) {
+    if (blob) ecDlBlob(blob, 'edited.png');
+    else ecShowAlert('Could not save image.', 'error');
+  }, 'image/png');
+}
+function ecResetEditor() {
+  document.getElementById('ecRotationSlider').value   = 0;
+  document.getElementById('ecBrightnessSlider').value = 100;
+  document.getElementById('ecContrastSlider').value   = 100;
+  document.getElementById('ecSaturationSlider').value = 100;
+  ecUpdateEditorPreview();
+}
+
+//  DATA CONVERTER
+function ecConvertData() {
+  var input = document.getElementById('ecDataInput').value.trim();
+  if (!input) { ecShowAlert('Please paste data first','error'); return; }
+  var format = document.getElementById('ecSelectedDataFormat').value;
+  try {
+    var data;
+    try { data = JSON.parse(input); }
+    catch(e) { data = input.split('\n').map(function(l){ return l.split(','); }); }
+    var out = '';
+    if (format === 'json') { out = JSON.stringify(data, null, 2); }
+    else if (format === 'csv') {
+      if (Array.isArray(data) && Array.isArray(data[0])) {
+        out = data.map(function(r){ return r.join(','); }).join('\n');
+      } else {
+        var keys = Object.keys(Array.isArray(data) ? data[0] : data);
+        out = keys.join(',') + '\n' + (Array.isArray(data) ?
+          data.map(function(o){ return keys.map(function(k){ return o[k]; }).join(','); }).join('\n') :
+          keys.map(function(k){ return data[k]; }).join(','));
+      }
+    } else if (format === 'xml') {
+      out = '<?xml version="1.0" encoding="UTF-8"?><root>' + JSON.stringify(data) + '</root>';
+    }
+    var safeOut = out.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    document.getElementById('ecDataOutput').innerHTML =
+      '<div class="ec-card" style="margin-top:10px;">' +
+        '<label class="ec-form-label">Result:</label>' +
+        '<textarea style="height:150px;font-family:monospace;font-size:12px;" id="ecDataResult">' + safeOut + '</textarea>' +
+        '<button type="button" class="ec-button ec-button-secondary" style="margin-top:10px;" onclick="ecDlText(document.getElementById(\'ecDataResult\').value,\'converted_data.'+format+'\',\'text/plain\')">&#11015;&#65039; Download Result</button>' +
+      '</div>';
+    ecShowAlert('Data converted!','success');
+  } catch(e) { ecShowAlert('Data error: '+e.message,'error'); }
+}
+
+//  UTILS
+function ecRemoveFile(tab, idx) {
+  ecFiles[tab].splice(idx, 1);
+  if      (tab === 0) ecDisplayThumbnails(0);
+  else if (tab === 1) document.getElementById('ecDocumentPreview').innerHTML = '';
+  else if (tab === 2) document.getElementById('ecSheetPreview').innerHTML = '';
+  else if (tab === 3) ecRenderCompressList();
+  else if (tab === 4) {
+    document.getElementById('ecDecompressPreview').innerHTML = '';
+    document.getElementById('ecDecompressFilesList').innerHTML = '';
+    document.getElementById('ecDecompressActions').style.display = 'none';
+  }
+}
+function ecDlFile(tab, idx) {
+  var f = ecFiles[tab][idx];
+  ecDlBlob(new Blob([f]), f.name);
+}
+function ecClearTab(tab) {
+  ecFiles[tab] = [];
+  if      (tab === 0) ecDisplayThumbnails(0);
+  else if (tab === 1) document.getElementById('ecDocumentPreview').innerHTML = '';
+  else if (tab === 2) document.getElementById('ecSheetPreview').innerHTML = '';
+  else if (tab === 3) document.getElementById('ecCompressFilesList').innerHTML = '';
+  else if (tab === 4) {
+    document.getElementById('ecDecompressPreview').innerHTML = '';
+    document.getElementById('ecDecompressFilesList').innerHTML = '';
+    document.getElementById('ecDecompressActions').style.display = 'none';
+  }
+}
+
+//  DRAG AND DROP
+function ecInitDragAndDrop() {
+  var app = document.getElementById('ec-app');
+  if (!app) return;
+  app.querySelectorAll('.ec-upload-zone').forEach(function(zone) {
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function()  { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      var id    = zone.id;
+      var files = e.dataTransfer.files;
+      if      (id === 'ecUploadZone0')      ecHandleImageUpload({target:{files:files}}, 0);
+      else if (id === 'ecUploadZone1')      ecHandleDocumentUpload({target:{files:files}});
+      else if (id === 'ecUploadZone2')      ecHandleSheetUpload({target:{files:files}});
+      else if (id === 'ecUploadZone3')      ecHandleCompressUpload({target:{files:files}});
+      else if (id === 'ecUploadZone4')      ecHandleDecompressUpload({target:{files:files}});
+      else if (id === 'ecUploadZoneBatch')  ecHandleBatchUpload({target:{files:files}});
+      else if (id === 'ecUploadZoneEditor') ecHandleEditorUpload({target:{files:files}});
+    });
+  });
+}
+
+//  FAVORITE MODAL
+function ecHandleFavorite() {
+  var modal = document.getElementById('ecFavoriteModal');
+  modal.style.display = 'flex';
+  try {
+    var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    document.getElementById('ecFavModalMsg').innerHTML =
+      'Press <strong>' + (isMac ? '&#8984; + D' : 'Ctrl + D') + '</strong> to bookmark Easy Convert in your browser.';
+  } catch(e) {}
+  modal.onclick = function(ev){ if(ev.target===modal) ecCloseFavModal(); };
+}
+function ecCloseFavModal() { document.getElementById('ecFavoriteModal').style.display = 'none'; }
+</script>
+</body>
+</html>
