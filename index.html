@@ -6,70 +6,76 @@
     <title>Professional JSON Formatter | Validate & Format Online</title>
     <style>
         :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 950px; background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid #334155; }
-        h1 { margin-top: 0; color: var(--primary); font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        textarea { width: 100%; height: 400px; background: #0f172a; color: #7dd3fc; border: 1px solid #475569; border-radius: 10px; padding: 20px; font-family: 'Courier New', monospace; font-size: 14px; box-sizing: border-box; }
+        h1 { color: var(--primary); text-transform: uppercase; margin-top: 0; }
+        textarea { width: 100%; height: 400px; background: #0f172a; color: #7dd3fc; border: 1px solid #475569; border-radius: 10px; padding: 20px; font-family: monospace; box-sizing: border-box; }
         .controls { display: flex; gap: 12px; margin-top: 20px; }
         button { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: 0.3s; }
         .btn-format { background: var(--primary); color: #0f172a; }
         .btn-format:hover { background: #7dd3fc; }
-        .btn-download { background: #10b981; color: white; }
-        .btn-clear { background: #ef4444; color: white; }
-        footer { margin-top: 40px; font-size: 12px; color: #64748b; text-align: center; border-top: 1px solid #334155; padding-top: 20px; }
-        footer a { color: #94a3b8; text-decoration: none; margin: 0 10px; }
-        footer a:hover { color: var(--primary); }
+        footer { margin-top: 40px; font-size: 12px; color: #64748b; text-align: center; }
+        footer a { color: #94a3b8; cursor: pointer; text-decoration: underline; margin: 0 10px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; }
+        .modal-content { background: var(--card); padding: 30px; max-width: 600px; border-radius: 12px; border: 1px solid var(--primary); color: #e2e8f0; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>JSON Formatter & Validator</h1>
-        <p>Clean, format, and validate your JSON data instantly.</p>
-        
+        <p>A professional utility to clean, format, and validate JSON data structures instantly.</p>
         <textarea id="jsonInput" placeholder="Paste your raw JSON code here..."></textarea>
-        
         <div class="controls">
             <button class="btn-format" onclick="formatJSON()">Format JSON</button>
-            <button class="btn-download" onclick="downloadJSON()">Download .json</button>
-            <button class="btn-clear" onclick="clearAll()">Clear</button>
+            <button onclick="downloadJSON()" style="background:#10b981; color:white;">Download .json</button>
+            <button onclick="clearAll()" style="background:#ef4444; color:white;">Clear</button>
         </div>
-        <div id="msg" style="margin-top: 15px; font-weight: 500;"></div>
+        <div id="msg" style="margin-top: 15px;"></div>
     </div>
 
     <footer>
-        <p>© 2026 JSON Formatter Pro. All rights reserved.</p>
+        <p>© 2026 JSON Formatter Pro.</p>
         <p>
-            <a href="mailto:support@jsonformatterpro.com">Contact Support</a> | 
-            <a href="#">Privacy Policy</a> | 
-            <a href="#">Terms of Service</a>
+            <a href="mailto:zcheaprducts@gmail.com">Contact Support</a> | 
+            <a onclick="showModal('policy')">Privacy Policy</a> | 
+            <a onclick="showModal('terms')">Terms of Service</a>
         </p>
     </footer>
 
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modalTitle" style="color:var(--primary)"></h2>
+            <p id="modalText"></p>
+            <button onclick="closeModal()" style="margin-top:20px; background:var(--primary); color:#0f172a; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Close</button>
+        </div>
+    </div>
+
     <script>
-        function formatJSON() {
-            const input = document.getElementById('jsonInput');
-            const msg = document.getElementById('msg');
-            try {
-                const parsed = JSON.parse(input.value);
-                input.value = JSON.stringify(parsed, null, 4);
-                msg.innerHTML = '<span style="color:#10b981">✓ JSON formatted successfully!</span>';
-            } catch (e) {
-                msg.innerHTML = '<span style="color:#ef4444">⚠ Error: ' + e.message + '</span>';
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const text = document.getElementById('modalText');
+            if(type === 'policy') {
+                title.innerText = "Privacy Policy";
+                text.innerText = "This product is a local-first utility. We do not collect, store, or transmit any data entered into this tool. All processing happens entirely within your web browser. Your privacy is our priority.";
+            } else {
+                title.innerText = "Terms of Service";
+                text.innerText = "This JSON Formatter tool is provided as a utility for developers and data analysts. We provide no warranty of any kind. By using this service, you agree that you are responsible for the data you process.";
             }
+            modal.style.display = 'flex';
         }
-        function downloadJSON() {
-            const data = document.getElementById('jsonInput').value;
-            if(!data) return;
-            const blob = new Blob([data], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'formatted.json'; a.click();
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function formatJSON() { 
+            const input = document.getElementById('jsonInput');
+            try { input.value = JSON.stringify(JSON.parse(input.value), null, 4); } 
+            catch(e) { alert("Invalid JSON: " + e.message); } 
         }
-        function clearAll() {
-            document.getElementById('jsonInput').value = '';
-            document.getElementById('msg').innerHTML = '';
+        function downloadJSON() { 
+            const blob = new Blob([document.getElementById('jsonInput').value], {type: 'application/json'}); 
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'formatted.json'; a.click(); 
         }
+        function clearAll() { document.getElementById('jsonInput').value = ''; }
     </script>
 </body>
 </html>
